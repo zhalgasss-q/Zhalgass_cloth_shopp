@@ -1,3 +1,3 @@
 public class okoshanel {
 }
-public
+public ss
