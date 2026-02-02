@@ -1,3 +1,3 @@
 public class okoshanel {
 }
-ssss
+public
