@@ -88,37 +88,45 @@ public class ClothingItemDAO {
         }
     }
 
-    public boolean deleteItem(int id) throws SQLException{
+    public boolean deleteItem(int id) throws SQLException {
         String sql = "DELETE FROM clothing_items WHERE id = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
-            PreparedStatement ps = conn.prepareStatement(sql));
-        {
-            ps.setInt(1,id);
-            return ps.executeUpdate()> 0;
+             PreparedStatement ps = conn.prepareStatement(sql)) {
 
+            ps.setInt(1, id);
+            return ps.executeUpdate() > 0;
         }
-
-
-
     }
 
-
-    public List<ClothingItem> searchByPriceRange(double minPrice, double maxPrice) throws SQLException{
+    public List<ClothingItem> searchByPriceRange(double minPrice, double maxPrice) throws SQLException {
         List<ClothingItem> items = new ArrayList<>();
 
-        String sql = """ 
-            SELECT * FROM Clothing_items
-            
-                
+        String sql = """
+                SELECT * FROM clothing_items
+                WHERE price BETWEEN ? AND ?
+                ORDER BY price
+                """;
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setDouble(1, minPrice);
+            ps.setDouble(2, maxPrice);
+
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                items.add(mapRow(rs));
+            }
+        }
+        return items;
     }
-    
 
     public List<ClothingItem> searchByMinPrice(double minPrice) throws SQLException {
         List<ClothingItem> items = new ArrayList<>();
 
         String sql = """
-                SELECT * FROM clothing_items
+SELECT * FROM clothing_items
                 WHERE price >= ?
                 ORDER BY price DESC
                 """;
